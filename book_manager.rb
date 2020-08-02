@@ -6,5 +6,10 @@
 
 #este serviço pode ser inplementado como extensão de user manager
 
+class BookManager
+    def inicializador()
+    end
+end
+
 
 
