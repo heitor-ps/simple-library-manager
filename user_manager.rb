@@ -5,16 +5,25 @@
 #evitar homônimos
 
 #implementar sistema de cadastro e sistema de consulta
-#verificar rng para criação de número de cadastro
+#retificar dados inseridos
 
 
-class UserManager
+class UserManager    
     i=0
     users = Hash.new
    #users[0] = "fulano",23,45
    #users[1] = "fulanin", 45, 4545451
     #puts users[0].to_s
     #puts rand(1000..9999)
+
+
+    def inicializador()
+        puts "Welcome to the User Manager v 1.0\n\n"
+        puts "Select the operation:"
+
+
+        
+    end
     
 
     def geraNumeroCadastro()
@@ -32,16 +41,17 @@ class UserManager
             cadastraUsuario()
        end
 
+       #terminar a implementação dos validadores
+
     end
 
     def consultaUsuario()
-    end
+    end      
     
-    private
     def cadastraUsuario()
+              
         #users = Hash.new
-
-        puts "insert user data"
+        puts "Insert user data"
         puts "username"
         username = gets.chomp
         puts "birthday"
@@ -65,7 +75,7 @@ class UserManager
             end           
         end
     end
-    def removeUsuario
+    def removeUsuario()
     end
 
 end
