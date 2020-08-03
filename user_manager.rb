@@ -5,25 +5,29 @@
 
 #implementar sistema de cadastro e sistema de consulta
 #retificar dados inseridos
-
-class UserManager
-
+   
+class UserManager    
     def inicializador()
+        require_relative 'main'
+        mainMenu = Main.new
         puts "\n\n******** Welcome to the User Manager v 1.0 ********\n\n"
         puts "\tSelect the operation:\n"
-        puts "1.New User    2.Check Users    3.Delete Users\n\n"
+        puts "1.New User    2.Check Users    3.Delete Users    4.Exit"
         selection = gets.chomp.to_i()
 
         if selection == 1
-            cadastraUsuario()            
+            cadastraUsuario()
         elsif selection == 2
             consultaUsuario()
         elsif selection == 3
             removeUsuario()
+        elsif selection == 4
+            puts "Exiting to main program..."
+            mainMenu.mainInicializador()
         else
             puts "Wrong argument given. Restarting...."
-            inicializador()         
-        end       
+            inicializador()
+        end
     end
 
     #Primeiro Método Principal
@@ -31,7 +35,7 @@ class UserManager
         puts "Insert user data\n"
         puts "\nUSERNAME"
         username = gets.chomp()
-        puts "\nBIRTHDAY"
+        puts "\nBIRTHDAY WITHOUT /"
         birthday = gets.chomp()
         puts "\nID NUMBER"
         rg = gets.chomp()
@@ -43,13 +47,15 @@ class UserManager
         puts "Received id: #{rg}"    
 
         if gets.chomp() == "yes"
-            puts "proceding..."        
+            puts "proceding..."
+            #chamar a função guardaDados()
         else 
-            puts "restart operation?"            
+            puts "restart operation?"
             if gets.chomp() == "yes"
                 cadastraUsuario()
-            else puts "aborting..."
-            end           
+            else 
+                puts "aborting..."
+            end
         end
     end
     #
@@ -79,9 +85,12 @@ class UserManager
     def dataValidator(userNameToValidate,birthdayToValidate,rgToValidate)        
         nameVerifier = userNameToValidate.gsub(/[^a-zA-Z ]/,"")
 
-        if nameVerifier.size != userNameToValidate.size
-            puts "Invalid character(s) at #{userNameToValidate}. Aborting..."
+        if nameVerifier.size != userNameToValidate.size || nameVerifier != username
+            puts "Invalid entries at #{userNameToValidate}. Aborting..."
             cadastraUsuario()
+        end
+
+        if birthdayToValidate
         end
     end
     #continuar implementando validadores   
