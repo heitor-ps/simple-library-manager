@@ -5,14 +5,17 @@
 
 #implementar sistema de cadastro e sistema de consulta
 #retificar dados inseridos
-   
-class UserManager    
+
+class UserManager
+    require_relative 'main'
+    require_relative 'database_operations'
+    $mainMenu = Main.new
+    $database = DatabaseOperations.new  
+    
     def inicializador()
-        require_relative 'main'
-        mainMenu = Main.new
         puts "\n\n******** Welcome to the User Manager v 1.0 ********\n\n"
         puts "\tSelect the operation:\n"
-        puts "1.New User    2.Check Users    3.Delete Users    4.Exit"
+        puts "1.New User    2.Check Users    3.Update User    4.Delete User    5.Exit to Main App"
         selection = gets.chomp.to_i()
 
         if selection == 1
@@ -20,80 +23,81 @@ class UserManager
         elsif selection == 2
             consultaUsuario()
         elsif selection == 3
-            removeUsuario()
+            atualizaUsuario()
         elsif selection == 4
-            puts "Exiting to main program..."
-            mainMenu.mainInicializador()
+            removeUsuario()
+        elsif selection == 5
+            puts "Exitingo to Main App..."
+            $mainMenu.mainInicializador()     
         else
             puts "Wrong argument given. Restarting...."
             inicializador()
         end
     end
 
-    #Primeiro Método Principal
-    def cadastraUsuario()       
+    def cadastraUsuario()
         puts "Insert user data\n"
-        puts "\nUSERNAME"
+        puts "\nUSERNAME (Don't use any symbol)"
         username = gets.chomp()
-        puts "\nBIRTHDAY WITHOUT /"
+        puts "\nBIRTHDAY (00/11/2222 format)"
         birthday = gets.chomp()
-        puts "\nID NUMBER"
+        puts "\nID NUMBER (only numbers)"
         rg = gets.chomp()
-        dataValidator(username,birthday,rg)
-        
+
         puts "is this data correct?"
         puts "Received name: #{username}"
         puts "Received birthday: #{birthday}"
-        puts "Received id: #{rg}"    
-
+        puts "Received id: #{rg}"
+        
         if gets.chomp() == "yes"
-            puts "proceding..."
-            #chamar a função guardaDados()
+            puts "Proceding..."
+            dataValidator(username,birthday,rg)
+            $database.guardaDados(username, birthday, rg, geraNumeroCadastro(rg))
+            puts "Finished... Returning to User Manager"
+            cadastraUsuario()
         else 
             puts "restart operation?"
             if gets.chomp() == "yes"
                 cadastraUsuario()
             else 
                 puts "aborting..."
+                inicializador()
             end
         end
     end
-    #
 
-    #Segundo Método Principal
     def consultaUsuario()
     end
-    #
-
-    #Terceiro Método Principal
+       
     def removeUsuario()
-    end
-    #
+    end 
 
-    #Métodos Secundários (Verificação de dados, armazenamento de info etc)
-
-    def guardaDados(value)
-        users = Hash.new
-        users << value
+    def atualizaUsuario()
     end
 
-    def geraNumeroCadastro()
-        genNumber = rand(1000..9999)
-        return genNumber
+    def geraNumeroCadastro(value)
+        genNumber = rand(1000..9999).to_s
+        result = genNumber+value
+        return result        
     end
 
-    def dataValidator(userNameToValidate,birthdayToValidate,rgToValidate)        
+    #Método para fazer uma verificação básica de dados
+    def dataValidator(userNameToValidate,birthdayToValidate,rgToValidate)
         nameVerifier = userNameToValidate.gsub(/[^a-zA-Z ]/,"")
-
-        if nameVerifier.size != userNameToValidate.size || nameVerifier != username
-            puts "Invalid entries at #{userNameToValidate}. Aborting..."
-            cadastraUsuario()
+        if (nameVerifier.size != userNameToValidate.size || nameVerifier != userNameToValidate)
+            puts "Invalid entries at #{userNameToValidate}. Aborting..."            
         end
 
-        if birthdayToValidate
+        birthdayVerifier = birthdayToValidate.gsub(/[a-zA-Z ]/,"")
+        if birthdayToValidate.size != 10 || birthdayVerifier.size != birthdayToValidate.size
+            puts "Invalid entries at #{birthdayToValidate}. Insert the correct info"
         end
-    end
-    #continuar implementando validadores   
+
+        rgVerifier = rgToValidate.gsub(/[a-zA-Z ]/,"")
+        if rgToValidate.size != 7 || rgVerifier.size != rgToValidate.size
+            puts "Invalid entries at #{rgToValidate}. Aborting..."            
+        end       
+    end    
 end
 
 #ESSA PARTE AQUI É TESTE DE COISAS AAAAAAAA 
@@ -104,11 +108,13 @@ end
 #object = UserManager.new
 #object.cadastraUsuario()
 
-str = "aa sdas das$ds"
-compare = str.gsub(/[^a-zA-Z ]/,"")
-puts "String original: #{str}"
-puts "String depois do GSUB: #{compare}"
-puts str.size == compare.size
+
+
+# str = "aa sdas das$ds"
+# compare = str.gsub(/[^a-zA-Z ]/,"")
+# puts "String original: #{str}"
+# puts "String depois do GSUB: #{compare}"
+# puts str.size == compare.size
 
 
 #A string original tem os caracateres inválidos removidos
