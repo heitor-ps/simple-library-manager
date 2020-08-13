@@ -10,7 +10,7 @@ class UserManager
     require_relative 'main'
     require_relative 'database_operations'
     $mainMenu = Main.new
-    $database = DatabaseOperations.new  
+    $database = DatabaseOperations.new
     
     def inicializador()
         puts "\n\n******** Welcome to the User Manager v 1.0 ********\n\n"
@@ -27,7 +27,7 @@ class UserManager
         elsif selection == 4
             removeUsuario()
         elsif selection == 5
-            puts "Exitingo to Main App..."
+            puts "Exiting to Main App..."
             $mainMenu.mainInicializador()     
         else
             puts "Wrong argument given. Restarting...."
@@ -51,10 +51,14 @@ class UserManager
         
         if gets.chomp() == "yes"
             puts "Proceding..."
-            dataValidator(username,birthday,rg)
-            $database.guardaDados(username, birthday, rg, geraNumeroCadastro(rg))
-            puts "Finished... Returning to User Manager"
-            cadastraUsuario()
+
+            if dataValidator(username,birthday,rg) == false
+                $database.guardaDadosUsuario(username, birthday, rg, geraNumeroCadastro(rg))
+                inicializador()
+            else 
+                puts "Exiting..."
+                inicializador()
+            end            
         else 
             puts "restart operation?"
             if gets.chomp() == "yes"
@@ -67,6 +71,22 @@ class UserManager
     end
 
     def consultaUsuario()
+        puts "1.Search a username    2.Show all users    3.Return to User Manager\n"
+        value = gets.chomp().to_i()
+
+        if value == 1
+            puts "Insert a username\n"
+            name = gets.chomp()
+            $database.recuperaDadosPorNome(name)
+            consultaUsuario()
+        elsif value == 2
+            puts "Showing all users in this database\n"
+            $database.mostraUsuarios()
+            consultaUsuario()
+        else
+            puts "Returning..."
+            inicializador()
+        end        
     end
        
     def removeUsuario()
@@ -85,18 +105,23 @@ class UserManager
     def dataValidator(userNameToValidate,birthdayToValidate,rgToValidate)
         nameVerifier = userNameToValidate.gsub(/[^a-zA-Z ]/,"")
         if (nameVerifier.size != userNameToValidate.size || nameVerifier != userNameToValidate)
-            puts "Invalid entries at #{userNameToValidate}. Aborting..."            
+            puts "Invalid entries at #{userNameToValidate}. Please, insert the correct info." 
+            return true       
         end
 
         birthdayVerifier = birthdayToValidate.gsub(/[a-zA-Z ]/,"")
         if birthdayToValidate.size != 10 || birthdayVerifier.size != birthdayToValidate.size
-            puts "Invalid entries at #{birthdayToValidate}. Insert the correct info"
+            puts "Invalid entries at #{birthdayToValidate}. Please, insert the correct info."
+            return true
         end
 
         rgVerifier = rgToValidate.gsub(/[a-zA-Z ]/,"")
         if rgToValidate.size != 7 || rgVerifier.size != rgToValidate.size
-            puts "Invalid entries at #{rgToValidate}. Aborting..."            
-        end       
+            puts "Invalid entries at #{rgToValidate}. Please, insert the correct info." 
+            return true
+        end
+
+       return false
     end    
 end
 
